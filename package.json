@@ -1,0 +1,22 @@
+{
+  "name": "hamsterwars-assignment",
+  "version": "1.0.0",
+  "description": "**Din uppgift är att bygga en fullstack lösning för kommande virala sensationen, webplatsen HAMSTERWARS.**\r Webbplatsen är en spinoff på [Kittenwar](http://www.kittenwar.com), en hemsida där matcher mellan två bilder slumpas fram och besökarna röstar på den de finner gulligast. Poäng ska räknas, listor ska sammanställas.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/iths-sthm-feu20-effektiv/hamsterwars-assignment.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/iths-sthm-feu20-effektiv/hamsterwars-assignment/issues"
+  },
+  "homepage": "https://github.com/iths-sthm-feu20-effektiv/hamsterwars-assignment#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
