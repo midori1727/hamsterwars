@@ -9,8 +9,8 @@ const db = getDatabase();
 
 // Get alla hamsters
 router.get('/', async (req, res) => {
-	const hamstersRef = db.collection('hamsters');
-	const snapShot = await hamstersRef.get();
+	const docRef = db.collection('hamsters');
+	const snapShot = await docRef.get();
 
 	if (snapShot.empty) {
 		res.send([]);
@@ -19,36 +19,36 @@ router.get('/', async (req, res) => {
 	let allHamsters = [];
 	snapShot.forEach( doc => {
 		const data = doc.data();
-		data.id = doc.id;
+		// data.id = doc.id;
 		allHamsters.push(data);
 	});
 	res.send(allHamsters);
 });
 
 
-// Get random hamsters  /hamsters/random
+// Get random hamster 
 router.get('/random', async (req, res) => {
-	const hamstersRef = db.collection('hamsters');
-	const snapShot = await hamstersRef.get();
+	const docRef = db.collection('hamsters');
+	const snapShot = await docRef.get();
 
 	if (snapShot.empty) {
 		res.send([]);
 		return;
 	};
 
-	let allHamsters = [];
+	let randomHamsters = [];
 	snapShot.forEach( doc => {
 		const data = doc.data();
-		data.id = doc.id;
-		allHamsters.push(data);
+		// data.id = doc.id;
+		randomHamsters.push(data);
 	});
 	
-	let random = Math.floor(Math.random()*allHamsters.length);
-	res.send(allHamsters[random]);
+	let randomIndex = Math.floor(Math.random()*randomHamsters.length);
+	res.send(randomHamsters[randomIndex]);
 });
 
 
-// Get hamsters med ID  /hamsters/:id
+// Get hamster med ID
 router.get('/:id', async (req, res) => {
 	const id = req.params.id;
 	const docRef = await db.collection('hamsters').doc(id).get();
@@ -64,7 +64,7 @@ router.get('/:id', async (req, res) => {
 });
 
 
-// POST hamsters        /hamsters
+// POST hamsters        
 router.post('/', async (req, res) => {
 	const object = req.body;
 
@@ -78,7 +78,7 @@ router.post('/', async (req, res) => {
 });
 
 
-// PUT hamsters         /hamsters/:id
+// PUT hamster        
 router.put('/:id', async (req, res) => {
 	const object = req.body;
 	const id = req.params.id;
@@ -94,7 +94,7 @@ router.put('/:id', async (req, res) => {
 });
 
 
-// DELETE hamsters      /hamsters/:id
+// DELETE hamster    
 router.delete('/:id', async (req, res) => {
 	const id = req.params.id;
 
