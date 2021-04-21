@@ -9,7 +9,7 @@ admin.initializeApp({
 
 
 function getDatabase() {
-	return admin.firestore()
+	return admin.firestore();
 };
 
 module.exports = getDatabase;
