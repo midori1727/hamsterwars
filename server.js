@@ -19,7 +19,7 @@ app.use( cors() );
 
 //Routes
 
-app.use('/', hamsters);
+app.use('/hamsters', hamsters);
 
 
 //Starta servern
