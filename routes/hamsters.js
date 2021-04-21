@@ -99,10 +99,14 @@ router.put('/:id', async (req, res) => {
 
 // validering
 function isHamstersObject(hamsterObject) {
-	if (!hamsterObject || !hamsterObject.name || !hamsterObject.age || !hamsterObject.favFood || !hamsterObject.loves || !hamsterObject.imgName || !hamsterObject.wins || !hamsterObject.defeats || !hamsterObject.games) {
+	if (!hamsterObject) {
+		return false;
+	} else if (!hamsterObject.name || !hamsterObject.age || !hamsterObject.favFood || !hamsterObject.loves || !hamsterObject.imgName) {
+		return false;
+	} else if (!hamsterObject.wins || !hamsterObject.defeats || !hamsterObject.games) {
 		return false;
 	}
-	return true;
+		return true;
 }
 
 module.exports = router;
