@@ -13,15 +13,16 @@ router.get('/', async (req, res) => {
 	const snapShot = await docRef.get();
 
 	if (snapShot.empty) {
-		res.send([]);
+		res.status(404).send('There are no hamsters!')
 		return;
 	};
 	let allHamsters = [];
 	snapShot.forEach( doc => {
 		const data = doc.data();
-		// data.id = doc.id;
+		data.id = doc.id;
 		allHamsters.push(data);
 	});
+	
 	res.send(allHamsters);
 });
 
@@ -32,14 +33,14 @@ router.get('/random', async (req, res) => {
 	const snapShot = await docRef.get();
 
 	if (snapShot.empty) {
-		res.send([]);
+		res.status(404).send('There are no hamsters!')
 		return;
 	};
 
 	let randomHamsters = [];
 	snapShot.forEach( doc => {
 		const data = doc.data();
-		// data.id = doc.id;
+		data.id = doc.id;
 		randomHamsters.push(data);
 	});
 	
@@ -83,13 +84,27 @@ router.put('/:id', async (req, res) => {
 	const object = req.body;
 	const id = req.params.id;
 
-	if(!object || !id) {
+	const docRef = db.collection('hamsters');
+	const snapShot = await docRef.get();
+	
+	let existingId = false;
+	snapShot.forEach( doc => {
+    	const data = doc.data();
+		data.id = doc.id;
+		if(id === data.id) {
+			existingId = true;
+		}
+	});
+
+	if(!existingId) {
+		res.status(404).send('This id is not exist: ' + id );
+		return;
+	} else if(!object) {
 		res.sendStatus(400);
 		return;
 	}
 	
-	const docRef = db.collection('hamsters').doc(id);
-	await docRef.set(object, { merge: true });
+	await docRef.doc(id).set(object, { merge: true });
 	res.sendStatus(200);
 });
 
@@ -98,15 +113,28 @@ router.put('/:id', async (req, res) => {
 router.delete('/:id', async (req, res) => {
 	const id = req.params.id;
 
+	const hamstrRef = db.collection('hamsters');
+	const snapShot = await hamstrRef.get();
+
+	let existingId = false;
+	snapShot.forEach( doc => {
+    	const data = doc.data();
+		data.id = doc.id;
+		if(id === data.id) {
+			existingId = true;
+		}
+	});
+
+	if(!existingId) {
+		res.status(404).send('This id is not exist: ' + id );
+		return;
+	}
 	if(!id) {
 		res.sendStatus(400);
 		return;
 	}
-	
 	await db.collection('hamsters').doc(id).delete();
 	res.sendStatus(200);
-	 
-
 })
 
 // validering
