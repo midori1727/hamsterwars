@@ -35,15 +35,15 @@ router.get('/random', async (req, res) => {
 		res.send([]);
 		return;
 	};
+
 	let allHamsters = [];
 	snapShot.forEach( doc => {
 		const data = doc.data();
 		data.id = doc.id;
 		allHamsters.push(data);
 	});
+	
 	let random = Math.floor(Math.random()*allHamsters.length);
-	console.log('index is ' + random);
-	console.log(allHamsters[random]);
 	res.send(allHamsters[random]);
 });
 
@@ -95,7 +95,19 @@ router.put('/:id', async (req, res) => {
 
 
 // DELETE hamsters      /hamsters/:id
+router.delete('/:id', async (req, res) => {
+	const id = req.params.id;
 
+	if(!id) {
+		res.sendStatus(400);
+		return;
+	}
+	
+	await db.collection('hamsters').doc(id).delete();
+	res.sendStatus(200);
+	 
+
+})
 
 // validering
 function isHamstersObject(hamsterObject) {
