@@ -40,7 +40,7 @@ router.get('/:id', async (req, res) => {
 router.post('/', async (req, res) => {
 	const object = req.body;
 
-	if(!object || !object.winnerId || !object.loserId){
+	if(!object || !object.winnerId || !object.loserId) {
 		res.sendStatus(400);
 		return 
 	}

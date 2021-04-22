@@ -61,7 +61,6 @@ router.get('/:id', async (req, res) => {
 
 	const data = docRef.data();
 	res.send(data);
-
 });
 
 
@@ -97,7 +96,7 @@ router.put('/:id', async (req, res) => {
 	});
 
 	if(!existingId) {
-		res.status(404).send('This id is not exist: ' + id );
+		res.status(404).send('This id does not exist: ' + id );
 		return;
 	} else if(!object) {
 		res.sendStatus(400);
@@ -126,7 +125,7 @@ router.delete('/:id', async (req, res) => {
 	});
 
 	if(!existingId) {
-		res.status(404).send('This id is not exist: ' + id );
+		res.status(404).send('This id does not exist: ' + id );
 		return;
 	}
 	if(!id) {
