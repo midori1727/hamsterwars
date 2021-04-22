@@ -19,6 +19,7 @@ router.get('/', async (req, res) => {
 		data.id = doc.id;
 		allmatches.push(data);
 	});
+	
 	res.send(allmatches);
 });
 
@@ -44,28 +45,18 @@ router.post('/', async (req, res) => {
 		res.sendStatus(400);
 		return 
 	}
+
 	const docRef = await db.collection('matches').add(object);
-	res.send(docRef.id);
+	res.send(`{ id: ${docRef.id} }`)
 });
 
 
 //DELETE matches
 router.delete('/:id', async (req, res) => {
 	const id = req.params.id;
+	const docRef = await db.collection('matches').doc(id).get();
 
-	const docRef = db.collection('matches');
-	const snapShot = await docRef.get();
-	
-	let existingId = false;
-	snapShot.forEach( doc => {
-    	const data = doc.data();
-		data.id = doc.id;
-		if(id === data.id) {
-			existingId = true;
-		}
-	});
-
-	if(!existingId) {
+	if(!docRef.exists) {
 		res.sendStatus(400);
 		return;
 	}
@@ -73,14 +64,6 @@ router.delete('/:id', async (req, res) => {
 	await db.collection('matches').doc(id).delete();
 	res.sendStatus(200);
 });
-
-
-//GET alla matches som hamstern med id har vunnit   /matchWinners/:id
-//GET 5 winners  /winners
-//get 5 losers   /losers
-
-
-
 
 
 module.exports = router;

@@ -1,13 +1,17 @@
 const express = require('express');
 const app = express();
 const cors = require('cors');
+const path = require('path');
+
 const hamsters = require('./routes/hamsters.js');
 const matches = require('./routes/matches.js');
-const path = require('path')
+const matchWinners = require('./routes/matchWinners.js');
+const winners = require('./routes/winners.js');
+const losers = require('./routes/losers.js');
 
 const PORT = 2000;
 const staticFolder = path.join(__dirname, 'public');
-const imgStaticFolder = path.join(__dirname, 'img');
+const imgFolder = path.join(__dirname, 'img');
 
 //Middleware
 
@@ -19,7 +23,7 @@ app.use((req, res, next) => {
 app.use( express.json() );
 app.use( cors() );
 app.use( express.static(staticFolder) );
-app.use('/img', express.static(imgStaticFolder) );
+app.use('/img', express.static(imgFolder) );
 
 
 
@@ -27,6 +31,9 @@ app.use('/img', express.static(imgStaticFolder) );
 
 app.use('/hamsters', hamsters);
 app.use('/matches', matches);
+app.use('/matchWinners', matchWinners);
+app.use('/winners', winners);
+app.use('/losers', losers);
 
 
 //Starta servern

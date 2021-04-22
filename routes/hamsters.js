@@ -68,13 +68,13 @@ router.get('/:id', async (req, res) => {
 router.post('/', async (req, res) => {
 	const object = req.body;
 
-	if(!isHamstersObject(object)) {
+	if(isHamstersObject(object)) {
 		res.sendStatus(400);
 		return;
 	}
 
 	const docRef = await db.collection('hamsters').add(object);
-	res.send(docRef.id)
+	res.send(`{ id: ${docRef.id} }`)
 });
 
 
@@ -83,10 +83,10 @@ router.put('/:id', async (req, res) => {
 	const object = req.body;
 	const id = req.params.id;
 	const docRef =  db.collection('hamsters')
-	const existingId = await docRef.doc(id).get();
+	const snapShot = await docRef.doc(id).get();
 
 	if
-	(!existingId.exists) {
+	(!snapShot.exists) {
 		res.status(404).send('This id does not exist: ' + id );
 		return;
 	} else if(!object) {
@@ -102,20 +102,9 @@ router.put('/:id', async (req, res) => {
 // DELETE hamster    
 router.delete('/:id', async (req, res) => {
 	const id = req.params.id;
+	const docRef = await db.collection('hamsters').doc(id).get();
 
-	const hamstrRef = db.collection('hamsters');
-	const snapShot = await hamstrRef.get();
-
-	let existingId = false;
-	snapShot.forEach( doc => {
-    	const data = doc.data();
-		data.id = doc.id;
-		if(id === data.id) {
-			existingId = true;
-		}
-	});
-
-	if(!existingId) {
+	if(!docRef.exists) {
 		res.status(404).send('This id does not exist: ' + id );
 		return;
 	}
@@ -137,6 +126,6 @@ function isHamstersObject(hamsterObject) {
 		return false;
 	}
 		return true;
-}
+};
 
 module.exports = router;
