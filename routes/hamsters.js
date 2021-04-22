@@ -82,20 +82,11 @@ router.post('/', async (req, res) => {
 router.put('/:id', async (req, res) => {
 	const object = req.body;
 	const id = req.params.id;
+	const docRef =  db.collection('hamsters')
+	const existingId = await docRef.doc(id).get();
 
-	const docRef = db.collection('hamsters');
-	const snapShot = await docRef.get();
-	
-	let existingId = false;
-	snapShot.forEach( doc => {
-    	const data = doc.data();
-		data.id = doc.id;
-		if(id === data.id) {
-			existingId = true;
-		}
-	});
-
-	if(!existingId) {
+	if
+	(!existingId.exists) {
 		res.status(404).send('This id does not exist: ' + id );
 		return;
 	} else if(!object) {
