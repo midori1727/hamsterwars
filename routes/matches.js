@@ -15,6 +15,7 @@ router.get('/', async (req, res) => {
 			res.status(404).send('There are no matches!')
 			return;
 		};
+
 		let allmatches = [];
 		snapShot.forEach( doc => {
 			const data = doc.data();
@@ -24,15 +25,16 @@ router.get('/', async (req, res) => {
 		
 		res.send(allmatches);
 	}
+
 	catch(error) {
 		console.log('An error occured!' + error.message);
 		res.status(500).send(error.message);
 	}
 });
 
+
 //GET match med ID
 router.get('/:id', async (req, res) => {
-
 	const id = req.params.id;
 
 	try {
@@ -46,16 +48,16 @@ router.get('/:id', async (req, res) => {
 		const data = docRef.data();
 		res.send(data);
 	}
+
 	catch(error) {
 		console.log('An error occured!' + error.message);
 		res.status(500).send(error.message);
 	}
-
 });
+
 
 //POST matches 
 router.post('/', async (req, res) => {
-
 	const object = req.body;
 
 	try {
@@ -90,17 +92,16 @@ router.post('/', async (req, res) => {
 				  { winnerId: ${matchData.winnerId} }
 				  { loserId: ${matchData.loserId} `);
 	}
+
 	catch(error) {
 		console.log('An error occured!' + error.message);
 		res.status(500).send(error.message);
 	}
-
 });
 
 
 //DELETE matches
 router.delete('/:id', async (req, res) => {
-
 	const id = req.params.id;
 
 	try {
@@ -114,6 +115,7 @@ router.delete('/:id', async (req, res) => {
 		await db.collection('matches').doc(id).delete();
 		res.sendStatus(200);
 	}
+	
 	catch(error) {
 		console.log('An error occured!' + error.message);
 		res.status(500).send(error.message);

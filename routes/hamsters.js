@@ -7,7 +7,7 @@ const db = getDatabase();
 
 // ** REST API ** 
 
-// Get alla hamsters
+// GET alla hamsters
 router.get('/', async (req, res) => {
 	let allHamsters = [];
 
@@ -26,6 +26,7 @@ router.get('/', async (req, res) => {
 		})
 		res.send(allHamsters);
 	}
+
 	catch(error) {
 		console.log('An error occured!' + error.message);
 		res.status(500).send(error.message);
@@ -33,6 +34,7 @@ router.get('/', async (req, res) => {
 });
 
 
+// GET random hamsteer
 router.get('/random', async (req, res) => {
 	let randomHamsters = [];
 
@@ -44,6 +46,7 @@ router.get('/random', async (req, res) => {
 			res.status(404).send('There are nor hamsters!');
 			return;
 		};
+
 		snapShot.forEach( doc => {
 			const data = doc.data();
 			data.id = doc.id;
@@ -52,6 +55,7 @@ router.get('/random', async (req, res) => {
 		let randomIndex = Math.floor(Math.random()*randomHamsters.length);
 		res.send(randomHamsters[randomIndex]);
 	}
+
 	catch(error) {
 		console.log('An error occured!' + error.message);
 		res.status(500).send(error.message);
@@ -59,6 +63,7 @@ router.get('/random', async (req, res) => {
 });
 
 
+//GET hamster med id
 router.get('/:id', async (req, res) => {
 	const id = req.params.id;
 
@@ -69,9 +74,11 @@ router.get('/:id', async (req, res) => {
 			res.status(404).send('Hamster does not exist');
 			return;
 		}
+
 		const data = docRef.data();
 		res.send(data);
 	}
+
 	catch(error) {
 		console.log('An error occured!' + error.message);
 		res.status(500).send(error.message);
@@ -79,7 +86,7 @@ router.get('/:id', async (req, res) => {
 });
 
 
-// POST hamsters        
+// POST hamster        
 router.post('/', async (req, res) => {
 	const object = req.body;
 
@@ -93,14 +100,14 @@ router.post('/', async (req, res) => {
 		const postedHamsterRef = await db.collection('hamsters').doc(docRef.id).get();
 		const postedHamsterData = postedHamsterRef.data();
 		res.send(`{ id: ${docRef.id} }
-				  { name: ${postedHamsterData.name} }
-				  { age: ${postedHamsterData.age} }
-				  { favFood: ${postedHamsterData.favFood} }
-				  { loves: ${postedHamsterData.loves} }
-				  { imgName: ${postedHamsterData.imgName} }
-				  { wins: ${postedHamsterData.wins} }
-				  { defeats: ${postedHamsterData.defeats} }
-				  { games: ${postedHamsterData.games} }`);
+				{ name: ${postedHamsterData.name} }
+				{ age: ${postedHamsterData.age} }
+				{ favFood: ${postedHamsterData.favFood} }
+				{ loves: ${postedHamsterData.loves} }
+				{ imgName: ${postedHamsterData.imgName} }
+				{ wins: ${postedHamsterData.wins} }
+				{ defeats: ${postedHamsterData.defeats} }
+				{ games: ${postedHamsterData.games} }`);
 	}
 
 	catch(error) {
@@ -131,19 +138,21 @@ router.put('/:id', async (req, res) => {
 		await docRef.doc(id).set(object, { merge: true });
 		res.sendStatus(200);
 	}
+
 	catch(error) {
 		console.log('An error occured!' + error.message);
 		res.status(500).send(error.message);
 	}
-
 });
 
 
 // DELETE hamster    
 router.delete('/:id', async (req, res) => {
 	const id = req.params.id;
+
 	try {
 		const docRef = await db.collection('hamsters').doc(id).get();
+
 		if(!docRef.exists) {
 			res.status(404).send('This id does not exist: ' + id );
 			return;
@@ -152,6 +161,7 @@ router.delete('/:id', async (req, res) => {
 		await db.collection('hamsters').doc(id).delete();
 		res.sendStatus(200);
 	}
+	
 	catch(error) {
 		console.log('An error occured!' + error.message);
 		res.status(500).send(error.message);

@@ -21,6 +21,7 @@ router.get('/', async (req, res) => {
 	
 		res.send(losingHamsters);
 	}
+	
 	catch(error) {
 		console.log('An error occured!' + error.message);
 		res.status(500).send(error.message);
