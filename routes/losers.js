@@ -9,9 +9,14 @@ router.get('/', async (req, res) => {
 
 	try {
 		let getHamsters = await db.collection('hamsters').orderBy('defeats', 'desc').limit(5).get();
+
+		// Lägg till hamster-objekt som har förlorat minst en gång
 		const losingHamsters = [];
 		getHamsters.forEach(doc => {
-			losingHamsters.push(doc.data());
+			data = doc.data();
+			if(data.defeats > 0){
+				losingHamsters.push(data);
+			}
 		});
 	
 		res.send(losingHamsters);

@@ -75,6 +75,7 @@ router.post('/', async (req, res) => {
 		winnerHamsterData.games += 1;
 
 		// lägg till 1 defeats och games i hamster-objekt när det förlorar
+		
 		const loserHamsterData = loserHamsterRef.data();
 		loserHamsterData.defeats += 1;
 		loserHamsterData.games += 1;

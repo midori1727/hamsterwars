@@ -9,11 +9,16 @@ router.get('/', async (req, res) => {
 
 	try {
 		let getHamsters = await db.collection('hamsters').orderBy('wins', 'desc').limit(5).get();
+		
+		// Lägg till hamster-objekt som har vunnit minst en gång
 		const winningHamsters = [];
 		getHamsters.forEach(doc => {
-			winningHamsters.push(doc.data());
+			data = doc.data();
+			if(data.wins > 0){
+				winningHamsters.push(data);
+			}
 		});
-	
+
 		res.send(winningHamsters);
 	}
 	catch(error) {
