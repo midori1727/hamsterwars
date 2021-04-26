@@ -88,8 +88,19 @@ router.post('/', async (req, res) => {
 			res.sendStatus(400);
 			return; 
 		}
+
 		const docRef = await db.collection('hamsters').add(object);
-		res.send(`{ id: ${docRef.id} }`);
+		const postedHamsterRef = await db.collection('hamsters').doc(docRef.id).get();
+		const data = postedHamsterRef.data();
+		res.send(`{ id: ${docRef.id} }
+				  { name: ${data.name} }
+				  { age: ${data.age} }
+				  { favFood: ${data.favFood} }
+				  { loves: ${data.loves} }
+				  { imgName: ${data.imgName} }
+				  { wins: ${data.wins} }
+				  { defeats: ${data.defeats} }
+				  { games: ${data.games} }`);
 	}
 
 	catch(error) {
