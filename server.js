@@ -9,7 +9,7 @@ const matchWinners = require('./routes/matchWinners.js');
 const winners = require('./routes/winners.js');
 const losers = require('./routes/losers.js');
 
-const PORT = 2000;
+const PORT = process.env.PORT || 2000;
 const staticFolder = path.join(__dirname, 'public');
 const imgFolder = path.join(__dirname, 'img');
 
