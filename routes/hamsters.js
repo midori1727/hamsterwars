@@ -91,16 +91,16 @@ router.post('/', async (req, res) => {
 
 		const docRef = await db.collection('hamsters').add(object);
 		const postedHamsterRef = await db.collection('hamsters').doc(docRef.id).get();
-		const data = postedHamsterRef.data();
+		const postedHamsterData = postedHamsterRef.data();
 		res.send(`{ id: ${docRef.id} }
-				  { name: ${data.name} }
-				  { age: ${data.age} }
-				  { favFood: ${data.favFood} }
-				  { loves: ${data.loves} }
-				  { imgName: ${data.imgName} }
-				  { wins: ${data.wins} }
-				  { defeats: ${data.defeats} }
-				  { games: ${data.games} }`);
+				  { name: ${postedHamsterData.name} }
+				  { age: ${postedHamsterData.age} }
+				  { favFood: ${postedHamsterData.favFood} }
+				  { loves: ${postedHamsterData.loves} }
+				  { imgName: ${postedHamsterData.imgName} }
+				  { wins: ${postedHamsterData.wins} }
+				  { defeats: ${postedHamsterData.defeats} }
+				  { games: ${postedHamsterData.games} }`);
 	}
 
 	catch(error) {

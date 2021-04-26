@@ -75,7 +75,6 @@ router.post('/', async (req, res) => {
 		winnerHamsterData.games += 1;
 
 		// lägg till 1 defeats och games i hamster-objekt när det förlorar
-		
 		const loserHamsterData = loserHamsterRef.data();
 		loserHamsterData.defeats += 1;
 		loserHamsterData.games += 1;
@@ -84,7 +83,12 @@ router.post('/', async (req, res) => {
 		await db.collection('hamsters').doc(object.loserId).set(loserHamsterData, { merge: true });
 		
 		const docRef = await db.collection('matches').add(object);
-		res.send(`{ id: ${docRef.id} }`)
+		const matchRef = await db.collection('matches').doc(docRef.id).get();
+		const matchData = matchRef.data();
+
+		res.send(`{ id: ${docRef.id} }
+				  { winnerId: ${matchData.winnerId} }
+				  { loserId: ${matchData.loserId} `);
 	}
 	catch(error) {
 		console.log('An error occured!' + error.message);
