@@ -9,58 +9,73 @@ const db = getDatabase();
 
 // Get alla hamsters
 router.get('/', async (req, res) => {
-	const docRef = db.collection('hamsters');
-	const snapShot = await docRef.get();
-
-	if (snapShot.empty) {
-		res.status(404).send('There are no hamsters!')
-		return;
-	};
 	let allHamsters = [];
-	snapShot.forEach( doc => {
-		const data = doc.data();
-		data.id = doc.id;
-		allHamsters.push(data);
-	});
-	
-	res.send(allHamsters);
+
+	try {
+		const docRef = db.collection('hamsters');
+		const snapShot = await docRef.get();
+
+		if (snapShot.empty) {
+			res.status(404).send('There are no hamsters!');
+			return;
+		};
+		snapShot.forEach( doc => {
+			const data = doc.data();
+			data.id = doc.id;
+			allHamsters.push(data);
+		})
+		res.send(allHamsters);
+	}
+	catch(error) {
+		console.log('An error occured!' + error.message);
+		res.status(500).send(error.message);
+	}
 });
 
 
-// Get random hamster 
 router.get('/random', async (req, res) => {
-	const docRef = db.collection('hamsters');
-	const snapShot = await docRef.get();
-
-	if (snapShot.empty) {
-		res.status(404).send('There are no hamsters!')
-		return;
-	};
-
 	let randomHamsters = [];
-	snapShot.forEach( doc => {
-		const data = doc.data();
-		data.id = doc.id;
-		randomHamsters.push(data);
-	});
-	
-	let randomIndex = Math.floor(Math.random()*randomHamsters.length);
-	res.send(randomHamsters[randomIndex]);
+
+	try {
+		const docRef = db.collection('hamsters');
+		snapShot = await docRef.get();
+
+		if (snapShot.empty) {
+			res.status(404).send('There are nor hamsters!');
+			return;
+		};
+		snapShot.forEach( doc => {
+			const data = doc.data();
+			data.id = doc.id;
+			randomHamsters.push(data);
+		});
+		let randomIndex = Math.floor(Math.random()*randomHamsters.length);
+		res.send(randomHamsters[randomIndex]);
+	}
+	catch(error) {
+		console.log('An error occured!' + error.message);
+		res.status(500).send(error.message);
+	}
 });
 
 
-// Get hamster med ID
 router.get('/:id', async (req, res) => {
 	const id = req.params.id;
-	const docRef = await db.collection('hamsters').doc(id).get();
 
-	if(!docRef.exists) {
-		res.status(404).send('Hamster does not exist')
-		return;
+	try {
+		const docRef = await db.collection('hamsters').doc(id).get();
+
+		if (!docRef.exists) {
+			res.status(404).send('Hamster does not exist');
+			return;
+		}
+		const data = docRef.data();
+		res.send(data);
 	}
-
-	const data = docRef.data();
-	res.send(data);
+	catch(error) {
+		console.log('An error occured!' + error.message);
+		res.status(500).send(error.message);
+	}
 });
 
 
@@ -68,13 +83,19 @@ router.get('/:id', async (req, res) => {
 router.post('/', async (req, res) => {
 	const object = req.body;
 
-	if(isHamstersObject(object)) {
-		res.sendStatus(400);
-		return;
+	try {
+		if(!isHamstersObject(object)) {
+			res.sendStatus(400);
+			return; 
+		}
+		const docRef = await db.collection('hamsters').add(object);
+		res.send(`{ id: ${docRef.id} }`);
 	}
 
-	const docRef = await db.collection('hamsters').add(object);
-	res.send(`{ id: ${docRef.id} }`)
+	catch(error) {
+		console.log('An error occured!' + error.message);
+		res.status(500).send(error.message);
+	}
 });
 
 
@@ -82,50 +103,90 @@ router.post('/', async (req, res) => {
 router.put('/:id', async (req, res) => {
 	const object = req.body;
 	const id = req.params.id;
-	const docRef =  db.collection('hamsters')
-	const snapShot = await docRef.doc(id).get();
 
-	if
-	(!snapShot.exists) {
-		res.status(404).send('This id does not exist: ' + id );
-		return;
-	} else if(!object) {
-		res.sendStatus(400);
-		return;
+	try {
+		const docRef =  db.collection('hamsters')
+		const snapShot = await docRef.doc(id).get();
+		
+		if
+		(!snapShot.exists) {
+			res.status(404).send('This id does not exist: ' + id );
+			return;
+		}else if(!checkHamsterObject(object) || !Object.keys(object).length){
+			res.sendStatus(400);
+			return;
+		}
+		
+		await docRef.doc(id).set(object, { merge: true });
+		res.sendStatus(200);
 	}
-	
-	await docRef.doc(id).set(object, { merge: true });
-	res.sendStatus(200);
+	catch(error) {
+		console.log('An error occured!' + error.message);
+		res.status(500).send(error.message);
+	}
+
 });
 
 
 // DELETE hamster    
 router.delete('/:id', async (req, res) => {
 	const id = req.params.id;
-	const docRef = await db.collection('hamsters').doc(id).get();
+	try {
+		const docRef = await db.collection('hamsters').doc(id).get();
+		if(!docRef.exists) {
+			res.status(404).send('This id does not exist: ' + id );
+			return;
+		}
 
-	if(!docRef.exists) {
-		res.status(404).send('This id does not exist: ' + id );
-		return;
+		await db.collection('hamsters').doc(id).delete();
+		res.sendStatus(200);
 	}
-	if(!id) {
-		res.sendStatus(400);
-		return;
+	catch(error) {
+		console.log('An error occured!' + error.message);
+		res.status(500).send(error.message);
 	}
-	await db.collection('hamsters').doc(id).delete();
-	res.sendStatus(200);
-})
+});
 
 // validering
-function isHamstersObject(hamsterObject) {
-	if (!hamsterObject) {
-		return false;
-	} else if (!hamsterObject.name || !hamsterObject.age || !hamsterObject.favFood || !hamsterObject.loves || !hamsterObject.imgName) {
-		return false;
-	} else if (!hamsterObject.wins || !hamsterObject.defeats || !hamsterObject.games) {
+
+function isHamstersObject(hamsterObject){
+	const digit = /^[0-9]+$/
+	if
+	(digit.test(hamsterObject.name) || 
+	!hamsterObject.name || 
+	!digit.test(hamsterObject.age) || 
+	digit.test(hamsterObject.favFood) || 
+	!hamsterObject.favFood || 
+	digit.test(hamsterObject.loves) || 
+	!hamsterObject.loves || 
+	digit.test(hamsterObject.imgName) || 
+	!hamsterObject.imgName || 
+	!digit.test(hamsterObject.wins) ||
+	!digit.test(hamsterObject.defeats) || 
+	!digit.test(hamsterObject.games))
+	{
 		return false;
 	}
 		return true;
 };
+
+function checkHamsterObject(hamsterObject) {
+	const digit = /^[0-9]+$/
+	for(property in hamsterObject) {
+		if
+		(property === 'name' && digit.test(hamsterObject.name) ||
+		 property === 'age' && !digit.test(hamsterObject.age) ||
+		 property === 'favFood' && digit.test(hamsterObject.favFood) ||
+		 property === 'loves' && digit.test(hamsterObject.loves) ||
+		 property === 'imgName' && digit.test(hamsterObject.imgName) ||
+		 property === 'wins' && !digit.test(hamsterObject.wins) ||
+		 property === 'defeats' && !digit.test(hamsterObject.defeats) ||
+		 property === 'games' && !digit.test(hamsterObject.games)
+		){
+			return false;
+		}
+	} 		return true;
+};
+	
 
 module.exports = router;
