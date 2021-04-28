@@ -18,7 +18,7 @@ router.get('/', async (req, res) => {
 				winningHamsters.push(data);
 			}
 		});
-
+		
 		res.send(winningHamsters);
 	}
 	

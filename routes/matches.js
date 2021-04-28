@@ -76,21 +76,24 @@ router.post('/', async (req, res) => {
 		winnerHamsterData.wins += 1;
 		winnerHamsterData.games += 1;
 
-		// lägg till 1 defeats och games i hamster-objekt när det förlorar
+		// lägg till 1 på defeats och games i hamster-objekt när det förlorar
 		const loserHamsterData = loserHamsterRef.data();
 		loserHamsterData.defeats += 1;
 		loserHamsterData.games += 1;
-		
+
 		await db.collection('hamsters').doc(object.winnerId).set(winnerHamsterData, { merge: true });
 		await db.collection('hamsters').doc(object.loserId).set(loserHamsterData, { merge: true });
 		
+		// Post match data till match collection
 		const docRef = await db.collection('matches').add(object);
+		// Hämta skapande match data
 		const matchRef = await db.collection('matches').doc(docRef.id).get();
 		const matchData = matchRef.data();
 
-		res.send(`{ id: ${docRef.id} }
-				  { winnerId: ${matchData.winnerId} }
-				  { loserId: ${matchData.loserId} `);
+		res.send({ id: docRef.id,
+					  winnerId: matchData.winnerId,
+					  loserId: matchData.loserId 
+					});
 	}
 
 	catch(error) {
@@ -108,7 +111,7 @@ router.delete('/:id', async (req, res) => {
 		const docRef = await db.collection('matches').doc(id).get();
 	
 		if(!docRef.exists) {
-			res.sendStatus(400);
+			res.sendStatus(404);
 			return;
 		}
 		

@@ -52,6 +52,7 @@ router.get('/random', async (req, res) => {
 			data.id = doc.id;
 			randomHamsters.push(data);
 		});
+
 		let randomIndex = Math.floor(Math.random()*randomHamsters.length);
 		res.send(randomHamsters[randomIndex]);
 	}
@@ -99,15 +100,15 @@ router.post('/', async (req, res) => {
 		const docRef = await db.collection('hamsters').add(object);
 		const postedHamsterRef = await db.collection('hamsters').doc(docRef.id).get();
 		const postedHamsterData = postedHamsterRef.data();
-		res.send(`{ id: ${docRef.id} }
-				{ name: ${postedHamsterData.name} }
-				{ age: ${postedHamsterData.age} }
-				{ favFood: ${postedHamsterData.favFood} }
-				{ loves: ${postedHamsterData.loves} }
-				{ imgName: ${postedHamsterData.imgName} }
-				{ wins: ${postedHamsterData.wins} }
-				{ defeats: ${postedHamsterData.defeats} }
-				{ games: ${postedHamsterData.games} }`);
+		res.send({ id: docRef.id,
+				name: postedHamsterData.name,
+				age: postedHamsterData.age,
+				favFood: postedHamsterData.favFood,
+				loves: postedHamsterData.loves,
+				imgName: postedHamsterData.imgName,
+				wins: postedHamsterData.wins,
+				defeats: postedHamsterData.defeats,
+				games: postedHamsterData.games});
 	}
 
 	catch(error) {
@@ -130,7 +131,7 @@ router.put('/:id', async (req, res) => {
 		(!snapShot.exists) {
 			res.status(404).send('This id does not exist: ' + id );
 			return;
-		}else if(!checkHamsterObject(object) || !Object.keys(object).length){
+		}else if(!checkHamsterObject(object) || !Object.keys(object).length ){
 			res.sendStatus(400);
 			return;
 		}
@@ -161,7 +162,7 @@ router.delete('/:id', async (req, res) => {
 		await db.collection('hamsters').doc(id).delete();
 		res.sendStatus(200);
 	}
-	
+
 	catch(error) {
 		console.log('An error occured!' + error.message);
 		res.status(500).send(error.message);
@@ -170,6 +171,7 @@ router.delete('/:id', async (req, res) => {
 
 // validering
 
+// validering för POST/hamsters
 function isHamstersObject(hamsterObject){
 	const digit = /^[0-9]+$/
 	if
@@ -191,23 +193,30 @@ function isHamstersObject(hamsterObject){
 		return true;
 };
 
+
+//validering för PUT/hamsters. Kontrollera key och type
 function checkHamsterObject(hamsterObject) {
 	const digit = /^[0-9]+$/
-	for(property in hamsterObject) {
-		if
-		(property === 'name' && digit.test(hamsterObject.name) ||
-		 property === 'age' && !digit.test(hamsterObject.age) ||
-		 property === 'favFood' && digit.test(hamsterObject.favFood) ||
-		 property === 'loves' && digit.test(hamsterObject.loves) ||
-		 property === 'imgName' && digit.test(hamsterObject.imgName) ||
-		 property === 'wins' && !digit.test(hamsterObject.wins) ||
-		 property === 'defeats' && !digit.test(hamsterObject.defeats) ||
-		 property === 'games' && !digit.test(hamsterObject.games)
-		){
+	for(property in hamsterObject){
+		if(property === 'name' && digit.test(hamsterObject.name)){
 			return false;
-		}
-	} 		return true;
+		} else if (property === 'age' && !digit.test(hamsterObject.age)){
+			return false;
+		} else if(property === 'favFood' && digit.test(hamsterObject.favFood)){
+			return false;
+		} else if(property === 'loves' && digit.test(hamsterObject.loves)){
+			return false;
+		} else if(property === 'imgName' && digit.test(hamsterObject.imgName)){
+			return false;
+ 		} else if(property === 'wins' && !digit.test(hamsterObject.wins)){
+			return false;
+		 } else if(property === 'defeats' && !digit.test(hamsterObject.defeats)){
+			return false;
+		 } else if (property === 'games' && !digit.test(hamsterObject.games)){
+			return false;
+		 }
+		    return true;
+	}
 };
-	
 
 module.exports = router;
