@@ -101,14 +101,14 @@ router.post('/', async (req, res) => {
 		const postedHamsterRef = await db.collection('hamsters').doc(docRef.id).get();
 		const postedHamsterData = postedHamsterRef.data();
 		res.send({ id: docRef.id,
-				name: postedHamsterData.name,
-				age: postedHamsterData.age,
-				favFood: postedHamsterData.favFood,
-				loves: postedHamsterData.loves,
-				imgName: postedHamsterData.imgName,
-				wins: postedHamsterData.wins,
-				defeats: postedHamsterData.defeats,
-				games: postedHamsterData.games});
+			name: postedHamsterData.name,
+			age: postedHamsterData.age,
+			favFood: postedHamsterData.favFood,
+			loves: postedHamsterData.loves,
+			imgName: postedHamsterData.imgName,
+			wins: postedHamsterData.wins,
+			defeats: postedHamsterData.defeats,
+			games: postedHamsterData.games});
 	}
 
 	catch(error) {
@@ -210,11 +210,11 @@ function checkHamsterObject(hamsterObject) {
 			return false;
  		} else if(property === 'wins' && !digit.test(hamsterObject.wins)){
 			return false;
-		 } else if(property === 'defeats' && !digit.test(hamsterObject.defeats)){
+		} else if(property === 'defeats' && !digit.test(hamsterObject.defeats)){
 			return false;
-		 } else if (property === 'games' && !digit.test(hamsterObject.games)){
+		} else if (property === 'games' && !digit.test(hamsterObject.games)){
 			return false;
-		 }
+		}
 		    return true;
 	}
 };
