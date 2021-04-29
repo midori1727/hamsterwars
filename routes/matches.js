@@ -41,7 +41,7 @@ router.get('/:id', async (req, res) => {
 		const docRef = await db.collection('matches').doc(id).get();
 	
 		if(!docRef.exists) {
-			res.status(404).send('match does not exist')
+			res.status(404).send('match does not exist');
 			return;
 		}
 	
@@ -68,15 +68,15 @@ router.post('/', async (req, res) => {
 		if(!winnerHamsterRef.exists || !loserHamsterRef.exists){
 			console.log('Winner hamster id or loser hamster id does not exist');
 			res.sendStatus(400);
-			return ;
+			return;
 		};
 
-		// lägg till 1 på wins och games i hamster-objekt när det vinner
+		//Lägg till 1 på wins och games i hamster-objekt när det vinner
 		const winnerHamsterData = winnerHamsterRef.data();
 		winnerHamsterData.wins += 1;
 		winnerHamsterData.games += 1;
 
-		// lägg till 1 på defeats och games i hamster-objekt när det förlorar
+		//Lägg till 1 på defeats och games i hamster-objekt när det förlorar
 		const loserHamsterData = loserHamsterRef.data();
 		loserHamsterData.defeats += 1;
 		loserHamsterData.games += 1;
@@ -84,9 +84,9 @@ router.post('/', async (req, res) => {
 		await db.collection('hamsters').doc(object.winnerId).set(winnerHamsterData, { merge: true });
 		await db.collection('hamsters').doc(object.loserId).set(loserHamsterData, { merge: true });
 		
-		// Post match data till match collection
+		//Post match data till match collection
 		const docRef = await db.collection('matches').add(object);
-		// Hämta skapande match data
+		//Hämta skapande match data
 		const matchRef = await db.collection('matches').doc(docRef.id).get();
 		const matchData = matchRef.data();
 
@@ -113,7 +113,28 @@ router.delete('/:id', async (req, res) => {
 		if(!docRef.exists) {
 			res.sendStatus(404);
 			return;
-		}
+		};
+
+		//Hämta winner och loser hamstersid
+		const matchData = docRef.data();
+		const winnerHamsterId = matchData.winnerId;
+		const loserHamsterId = matchData.loserId;
+		winnerHamsterRef = await db.collection('hamsters').doc(winnerHamsterId).get();
+		loserHamsterRef = await db.collection('hamsters').doc(loserHamsterId).get();
+
+		//Ta bort 1 på wins och games i winner-hamster-objekt 
+		const winnerHamsterData = winnerHamsterRef.data();
+		winnerHamsterData.wins -= 1;
+		winnerHamsterData.games -= 1;
+
+		//Ta bort 1 på defeats och games i loser-hamster-objekt 
+		const loserHamsterData = loserHamsterRef.data();
+		loserHamsterData.defeats -= 1;
+		loserHamsterData.games -= 1;
+
+		//Ändra winner och loser hamster data(ta bort 1)
+		await db.collection('hamsters').doc(winnerHamsterId).set(winnerHamsterData, { merge: true });
+		await db.collection('hamsters').doc(loserHamsterId).set(loserHamsterData, { merge: true });
 		
 		await db.collection('matches').doc(id).delete();
 		res.sendStatus(200);

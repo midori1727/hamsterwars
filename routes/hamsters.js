@@ -124,7 +124,7 @@ router.put('/:id', async (req, res) => {
 	const id = req.params.id;
 
 	try {
-		const docRef =  db.collection('hamsters')
+		const docRef =  db.collection('hamsters');
 		const snapShot = await docRef.doc(id).get();
 		
 		if
@@ -173,7 +173,7 @@ router.delete('/:id', async (req, res) => {
 
 // validering för POST/hamsters
 function isHamstersObject(hamsterObject){
-	const digit = /^[0-9]+$/
+	const digit = /^[0-9]+$/;
 	if
 	(digit.test(hamsterObject.name) || 
 	!hamsterObject.name || 
@@ -196,7 +196,7 @@ function isHamstersObject(hamsterObject){
 
 //validering för PUT/hamsters. Kontrollera key och type
 function checkHamsterObject(hamsterObject) {
-	const digit = /^[0-9]+$/
+	const digit = /^[0-9]+$/;
 	for(property in hamsterObject){
 		if(property === 'name' && digit.test(hamsterObject.name)){
 			return false;
